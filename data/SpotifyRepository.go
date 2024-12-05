@@ -18,3 +18,7 @@ func (repo *SpotifyRepositoryImpl) GetSpotifyCard() string {
 func (repo *SpotifyRepositoryImpl) AuthenticateSpotify() {
 
 }
+
+func (repo *SpotifyRepositoryImpl) ConnectState() {
+
+}

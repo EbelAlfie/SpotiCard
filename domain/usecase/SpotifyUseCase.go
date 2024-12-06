@@ -1,4 +1,4 @@
-package domain
+package usecase
 
 type SpotifyRepository interface {
 	GetSpotifyCard() string

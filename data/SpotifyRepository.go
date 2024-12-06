@@ -1,11 +1,11 @@
 package data
 
-import "spoti-card.com/domain"
+import "spoti-card.com/domain/usecase"
 
 type SpotifyRepositoryImpl struct {
 }
 
-func InitSpotifyRepository() domain.SpotifyRepository {
+func InitSpotifyRepository() usecase.SpotifyRepository {
 	return &SpotifyRepositoryImpl{}
 }
 

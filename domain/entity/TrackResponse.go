@@ -1,5 +1,5 @@
 package entity
 
 type TrackResponse struct {
-	Tracks []Track `json:"tracks"`
+	Tracks []TrackEntity `json:"tracks"`
 }

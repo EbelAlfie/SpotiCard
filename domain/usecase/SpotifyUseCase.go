@@ -1,9 +1,15 @@
 package usecase
 
-type SpotifyRepository interface {
-	GetSpotifyCard() string
+import "spoti-card.com/domain/entity"
 
-	AuthenticateSpotify()
+type TrackRepository interface {
+	GetDeviceState()
 
-	ConnectState()
+	GetTrackById(trackId string) (*entity.TrackResponse, error)
+}
+
+type TokenRepository interface {
+	FetchRefreshToken()
+
+	FetchClientToken()
 }

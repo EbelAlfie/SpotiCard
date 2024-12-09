@@ -1,5 +1,9 @@
 package entity
 
+type TrackResponse struct {
+	Tracks []TrackEntity `json:"tracks"`
+}
+
 type TrackEntity struct {
 	Album       AlbumEntity    `json:"album"`
 	Artists     []ArtistEntity `json:"artists"`

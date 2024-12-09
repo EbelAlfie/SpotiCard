@@ -2,7 +2,10 @@ package data
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
+	"strings"
 
 	"spoti-card.com/domain/entity"
 	"spoti-card.com/domain/usecase"
@@ -15,6 +18,9 @@ func TokenRepository() usecase.TokenRepository {
 }
 
 func (repo *TokenRepositoryImpl) FetchAccessToken() (*entity.AccessTokenEntity, error) {
+	cookie := os.Getenv("ME")
+	cookieHeader := fmt.Sprintf("sp_dc=%s;", cookie)
+
 	url := "https://open.spotify.com/get_access_token?reason=transport&productType=web-player"
 
 	client := http.Client{}
@@ -28,13 +34,14 @@ func (repo *TokenRepositoryImpl) FetchAccessToken() (*entity.AccessTokenEntity, 
 		return nil, err
 	}
 
-	request.Header.Add("cookie", `sp_dc=${this.me};`)
+	request.Header.Add("cookie", cookieHeader)
 
 	response, err := client.Do(request)
-	defer response.Body.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer response.Body.Close()
+
 	var result *entity.AccessTokenEntity
 
 	err = json.NewDecoder(response.Body).Decode(&result)
@@ -45,21 +52,40 @@ func (repo *TokenRepositoryImpl) FetchAccessToken() (*entity.AccessTokenEntity, 
 	return result, nil
 }
 
-func (repo *TokenRepositoryImpl) FetchClientToken() (*entity.ClientTokenEntity, error) {
+func (repo *TokenRepositoryImpl) FetchClientToken(clientId string) (*entity.ClientTokenEntity, error) {
 	url := "https://clienttoken.spotify.com/v1/clienttoken"
 
 	client := http.Client{}
 
-	request, err := http.NewRequest("GET", url, nil)
+	body := fmt.Sprintf(
+		`
+		{
+			"client_data":{
+				"client_version":"1.2.53.257.g47fa6c39",
+				"client_id":"%s",
+				"js_sdk_data":{
+					"device_brand":"unknown",
+					"device_model":"unknown",
+					"os":"linux",
+					"os_version":"unknown",
+					"device_id":"hahaha",
+					"device_type":"computer"
+					}
+				}
+			}
+	`, clientId)
+	reqBody := strings.NewReader(body)
+
+	request, err := http.NewRequest("GET", url, reqBody)
 	if err != nil {
 		return nil, err
 	}
 
 	response, err := client.Do(request)
-	defer response.Body.Close()
 	if err != nil {
 		return nil, err
 	}
+	defer response.Body.Close()
 
 	var responseResult *entity.ClientTokenEntity
 

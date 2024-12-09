@@ -6,9 +6,20 @@ import (
 	"strings"
 
 	"spoti-card.com/domain/entity"
+	"spoti-card.com/utils"
 )
 
 func SpotifyCard(track entity.TrackEntity) string {
+	artistsName := utils.MapArray(track.Artists, func(artist entity.ArtistEntity) string {
+		return artist.Name
+	})
+	var statusText string
+	if track.IsPlayable {
+		statusText = "Is Playing"
+	} else {
+		statusText = "Not Playing"
+	}
+
 	cardScale := 2
 
 	cardModifier := CardModifier{
@@ -42,13 +53,13 @@ func SpotifyCard(track entity.TrackEntity) string {
 	caption := TextModifier{
 		X:    80 * cardScale,
 		Y:    25 * cardScale,
-		Text: "",
+		Text: strings.Join(artistsName, ", "),
 	}
 
 	status := TextModifier{
 		X:    30,
 		Y:    equalizer.Y,
-		Text: "Is Playing",
+		Text: statusText,
 	}
 
 	config := struct {
@@ -150,7 +161,7 @@ func SpotifyCard(track entity.TrackEntity) string {
         />
         <text 
             class="song-title" 
-            fill="white" x="{{.Title.x}}" y="{{.Title.y}}"
+            fill="white" x="{{.Title.X}}" y="{{.Title.Y}}"
         >
             {{.Title.Text}}
         </text>
@@ -158,7 +169,7 @@ func SpotifyCard(track entity.TrackEntity) string {
             class="song-artist" 
             fill="white" x="{{.Caption.X}}" y="{{.Caption.Y}}"
         >
-            {.Caption.Text}}
+            {{.Caption.Text}}
         </text>
         <image 
             class="album-image" 

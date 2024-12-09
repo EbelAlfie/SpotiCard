@@ -78,8 +78,6 @@ func (repo *TrackRepositoryImpl) GetTrackById(trackId string) (*entity.TrackEnti
 		trackId,
 	)
 
-	fmt.Printf(trackUrl)
-
 	client := http.Client{}
 
 	request, err := http.NewRequest("GET", trackUrl, nil)

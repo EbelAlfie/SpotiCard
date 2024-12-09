@@ -46,5 +46,6 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 
 	card := presentation.SpotifyCard(*trackResult)
 
+	response.Header().Add("Content-Type", "text/html")
 	response.Write([]byte(card))
 }

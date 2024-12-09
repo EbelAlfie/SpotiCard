@@ -1,6 +1,10 @@
 package entity
 
 type PlaybackStateResponse struct {
+	PlayerState PlayerStateResponse `json:"player_state"`
+}
+
+type PlayerStateResponse struct {
 	Track CurrentTrack `json:"track"`
 }
 

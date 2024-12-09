@@ -19,7 +19,7 @@ func main() {
 	server := http.NewServeMux()
 	router.SpotifyRoute(server)
 
-	err = http.ListenAndServe("localhost:3030", server)
+	err = http.ListenAndServe("localhost:3031", server)
 
 	if err != nil {
 		log.Fatal("Cannot listen")

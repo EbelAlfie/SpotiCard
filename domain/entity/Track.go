@@ -12,12 +12,12 @@ type TrackEntity struct {
 	Explicit    bool           `json:"explicit"`
 	Href        string         `json:"href"`
 	Id          string         `json:"id"`
-	IsLocal     string         `json:"is_local"`
+	IsLocal     bool           `json:"is_local"`
 	IsPlayable  bool           `json:"is_playable"`
 	Name        string         `json:"name"`
 	Popularity  int            `json:"popularity"`
 	PreviewUrl  string         `json:"preview_url"`
-	TrackNumber string         `json:"track_number"`
+	TrackNumber int            `json:"track_number"`
 	Type        string         `json:"type"`
 	Uri         string         `json:"uri"`
 }

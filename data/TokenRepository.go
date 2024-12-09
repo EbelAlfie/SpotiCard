@@ -76,10 +76,13 @@ func (repo *TokenRepositoryImpl) FetchClientToken(clientId string) (*entity.Clie
 	`, clientId)
 	reqBody := strings.NewReader(body)
 
-	request, err := http.NewRequest("GET", url, reqBody)
+	request, err := http.NewRequest("POST", url, reqBody)
 	if err != nil {
 		return nil, err
 	}
+
+	request.Header.Add("accept", "application/json")
+	request.Header.Add("content-type", "application/json")
 
 	response, err := client.Do(request)
 	if err != nil {
@@ -87,12 +90,11 @@ func (repo *TokenRepositoryImpl) FetchClientToken(clientId string) (*entity.Clie
 	}
 	defer response.Body.Close()
 
-	var responseResult *entity.ClientTokenEntity
-
-	err = json.NewDecoder(response.Body).Decode(&responseResult)
+	var result *entity.ClientTokenEntity
+	err = json.NewDecoder(response.Body).Decode(&result)
 	if err != nil {
 		return nil, err
 	}
 
-	return responseResult, nil
+	return result, nil
 }

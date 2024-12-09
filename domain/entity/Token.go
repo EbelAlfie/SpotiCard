@@ -1,6 +1,13 @@
 package entity
 
-type TokenEntity struct {
+type AccessTokenEntity struct {
+	ClientId                         string `json:"client_id"`
+	AccessToken                      string `json:"accessToken"`
+	AccessTokenExpirationTimestampMs int64  `json:"accessTokenExpirationTimestampMs"`
+	IsAnonymous                      bool   `json:"isAnonymous"`
+}
+
+type ClientTokenEntity struct {
 	ResponseType string             `json:"response_type"`
 	GrantedToken GrantedTokenEntity `json:"granted_token"`
 }

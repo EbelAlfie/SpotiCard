@@ -9,7 +9,7 @@ type TrackRepository interface {
 }
 
 type TokenRepository interface {
-	FetchRefreshToken()
+	FetchAccessToken() (*entity.AccessTokenEntity, error)
 
-	FetchClientToken()
+	FetchClientToken() (*entity.ClientTokenEntity, error)
 }

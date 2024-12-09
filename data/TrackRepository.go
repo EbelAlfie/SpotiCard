@@ -41,17 +41,17 @@ func (repo *TrackRepositoryImpl) GetTrackById(trackId string) (*entity.TrackResp
 	request.Header.Add("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0")
 	request.Header.Add("sec-ch-ua-mobile", "?0")
 
-	response, httpErr := client.Do(request)
-	if httpErr != nil {
-		return nil, httpErr
+	response, err := client.Do(request)
+	if err != nil {
+		return nil, err
 	}
 	defer response.Body.Close()
 
 	var result entity.TrackResponse
 
-	decodeErr := json.NewDecoder(response.Body).Decode(&result)
-	if decodeErr != nil {
-		return nil, decodeErr
+	err = json.NewDecoder(response.Body).Decode(&result)
+	if err != nil {
+		return nil, err
 	}
 
 	return &result, nil

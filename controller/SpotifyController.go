@@ -9,7 +9,13 @@ import (
 func SpotifyController(response http.ResponseWriter, request *http.Request) {
 	repo := data.InitSpotifyRepository()
 
-	result := repo.GetSpotifyCard()
+	trackResult, err := repo.GetTrackById("")
+	if err != nil {
+		response.Write([]byte(err.Error()))
+		return
+	}
 
-	response.Write([]byte(result))
+	card := ""
+
+	response.Write([]byte(card))
 }

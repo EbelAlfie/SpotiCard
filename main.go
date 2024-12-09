@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/joho/godotenv"
@@ -11,16 +12,17 @@ import (
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {
-		fmt.Errorf("Cannot load env with error")
+		log.Fatal("Cannot load env with error")
 		fmt.Println(err)
 	}
 
 	server := http.NewServeMux()
 	router.SpotifyRoute(server)
 
-	servErr := http.ListenAndServe("localhost:3030", server)
+	err = http.ListenAndServe("localhost:3030", server)
 
-	if servErr != nil {
-		fmt.Println(servErr)
+	if err != nil {
+		log.Fatal("Cannot listen")
+		fmt.Println(err)
 	}
 }

@@ -1,6 +1,8 @@
 package presentation
 
-func SpotifyCard() string {
+import "spoti-card.com/domain/entity"
+
+func SpotifyCard(track entity.TrackEntity) string {
 	return `
 		<svg 
 			height="100" 

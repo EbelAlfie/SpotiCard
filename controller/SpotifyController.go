@@ -22,18 +22,17 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 
 	trackRepo := data.TrackRepository(*accessToken, *clientToken)
 
-	playbackState, err := trackRepo.GetDeviceState()
+	playbackState, err := trackRepo.GetPlaybackState()
 	if err != nil {
 		return
 	}
 
 	trackResult, err := trackRepo.GetTrackById(playbackState.Track.Uri)
 	if err != nil {
-		response.Write([]byte(err.Error()))
 		return
 	}
 
-	card := presentation.SpotifyCard()
+	card := presentation.SpotifyCard(*trackResult)
 
 	response.Write([]byte(card))
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"spoti-card.com/domain/entity"
 	"spoti-card.com/domain/usecase"
@@ -24,22 +25,44 @@ func TrackRepository(
 	}
 }
 
-func (repo *TrackRepositoryImpl) GetDeviceState() (*entity.PlaybackStateResponse, error) {
+func (repo *TrackRepositoryImpl) GetPlaybackState() (*entity.PlaybackStateResponse, error) {
 	url := "https://gew4-spclient.spotify.com/connect-state/v1/devices/hobs_86133792d6f7240c655de45fa6bc7f30527"
+	body := `
+		{
+            "member_type": "CONNECT_STATE",
+            "device": {
+              "device_info": {
+                "capabilities": {
+                  "can_be_player": false,
+                  "hidden": true,
+                  "needs_full_player_state": true
+                }
+              }
+            }
+        }
+	`
+	requestBody := strings.NewReader(body)
 
 	client := http.Client{}
 
-	request, err := http.NewRequest("PUT", url, nil)
+	request, err := http.NewRequest("PUT", url, requestBody)
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = client.Do(request)
+	response, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	var result *entity.PlaybackStateResponse
+	err = json.NewDecoder(response.Body).Decode(result)
 	if err != nil {
 		return nil, err
 	}
 
-	return nil, nil
+	return result, nil
 }
 
 func (repo *TrackRepositoryImpl) GetTrackById(trackId string) (*entity.TrackEntity, error) {

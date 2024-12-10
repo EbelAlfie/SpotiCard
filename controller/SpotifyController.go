@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -45,6 +46,8 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 	}
 
 	card := presentation.SpotifyCard(*trackResult)
+
+	fmt.Println("All request succeeded")
 
 	response.Header().Add("Content-Type", "text/html")
 	response.Write([]byte(card))

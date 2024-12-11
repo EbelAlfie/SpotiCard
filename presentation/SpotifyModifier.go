@@ -1,5 +1,12 @@
 package presentation
 
+import "spoti-card.com/domain/entity"
+
+type SpoticardModel struct {
+	Track     entity.TrackEntity
+	IsPlaying bool
+}
+
 type CardModifier struct {
 	Width  int
 	Height int

@@ -9,15 +9,17 @@ import (
 	"spoti-card.com/utils"
 )
 
-func SpotifyCard(track entity.TrackEntity) string {
+func SpotifyCard(model SpoticardModel) string {
+	track := model.Track
+
 	artistsName := utils.MapArray(track.Artists, func(artist entity.ArtistEntity) string {
 		return artist.Name
 	})
 	var statusText string
-	if track.IsPlayable {
-		statusText = "Is Playing"
+	if model.IsPlaying {
+		statusText = "Playing..."
 	} else {
-		statusText = "Not Playing"
+		statusText = "Paused"
 	}
 
 	cardScale := 2

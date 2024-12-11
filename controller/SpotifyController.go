@@ -47,7 +47,11 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	card := presentation.SpotifyCard(*trackResult)
+	cardModel := presentation.SpoticardModel{
+		Track:     *trackResult,
+		IsPlaying: playbackState.PlayerState.IsPlaying && !playbackState.PlayerState.IsPaused,
+	}
+	card := presentation.SpotifyCard(cardModel)
 
 	fmt.Println("All request succeeded")
 

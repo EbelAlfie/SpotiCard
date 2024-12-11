@@ -87,70 +87,72 @@ func SpotifyCard(track entity.TrackEntity) string {
         xmlns="http://www.w3.org/2000/svg"  
         xmlns:xlink="http://www.w3.org/1999/xlink"
     >
-        <style>
-            .album-image {
-                border-radius: 4px;
-            }
+        <defs>
+            <style>
+                .album-image {
+                    border-radius: 4px;
+                }
 
-            .song-title {
-                fill: #ffffff;
-                font-size: 20;
-            }
+                .song-title {
+                    fill: #ffffff;
+                    font-size: 20;
+                }
 
-            .song-artist {
-                fill: #b3b3b3;
-                font-size: 15;
-            }
+                .song-artist {
+                    fill: #b3b3b3;
+                    font-size: 15;
+                }
 
-            .track_status {
-                fill: #ffffff
-                font-size: 10;
-            }
+                .track_status {
+                    fill: #ffffff
+                    font-size: 10;
+                }
 
-            .equalizer {
-                height: 2px;
-                rx: 1;
-                fill: #1DB954;
-                transform-box: fill-box;
-                transform: rotate(180deg) ;
-                animation-iteration-count: infinite;
-                animation-name: equalizer-anim;
-            }
-
-            .eq-slow {
-                animation-duration: 1.2s;
-            }
-
-            .eq-medium {
-                animation-duration: 1.0s;
-            }
-
-            .eq-quick {
-                animation-duration: 0.8s;
-            }
-
-            .eq-fast {
-                animation-duration: 0.6s;
-            }
-
-            @keyframes equalizer-anim {
-                0%, 100% {
+                .equalizer {
                     height: 2px;
+                    rx: 1;
+                    fill: #1DB954;
+                    transform-box: fill-box;
+                    transform: rotate(180deg) ;
+                    animation-iteration-count: infinite;
+                    animation-name: equalizer-anim;
                 }
-                50% {
-                    height: 8px;
+
+                .eq-slow {
+                    animation-duration: 1.2s;
                 }
-                60% {
-                    height: 11px;
+
+                .eq-medium {
+                    animation-duration: 1.0s;
                 }
-            }
-        </style>
-        <video autoplay loop>
-            <source src="{{.Audio.Url}}" type="audio/mpeg" />
-        </video>
-        <script>
-            setInterval(() => { location.reload() }, 60000) ;
-        </script>
+
+                .eq-quick {
+                    animation-duration: 0.8s;
+                }
+
+                .eq-fast {
+                    animation-duration: 0.6s;
+                }
+
+                @keyframes equalizer-anim {
+                    0%, 100% {
+                        height: 2px;
+                    }
+                    50% {
+                        height: 8px;
+                    }
+                    60% {
+                        height: 11px;
+                    }
+                }
+            </style>
+            <video autoplay loop>
+                <source src="{{.Audio.Url}}" type="audio/mpeg" />
+            </video>
+            <script>
+                setInterval(() => { location.reload() }, 120000) ;
+            </script>
+        </defs>
         <rect 
             height="{{.Card.Height}}" 
             width="{{.Card.Width}}" 

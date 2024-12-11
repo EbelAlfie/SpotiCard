@@ -27,6 +27,8 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	fmt.Printf("New access token %s\n", accessToken.AccessToken)
+
 	trackRepo := data.TrackRepository(*accessToken, *clientToken)
 
 	playbackState, err := trackRepo.GetPlaybackState()

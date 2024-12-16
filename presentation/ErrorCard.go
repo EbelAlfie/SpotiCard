@@ -1,6 +1,6 @@
 package presentation
 
-func ErrorCard(message string) string {
+func ErrorCard(errorModel ErrorModel) string {
 	return `
 		<svg 
             height="${cardModifier.height}" 

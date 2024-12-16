@@ -35,5 +35,6 @@ type TextModifier struct {
 	Text string
 }
 
-type ErrorModifier struct {
+type ErrorModel struct {
+	Error error
 }

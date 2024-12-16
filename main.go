@@ -20,12 +20,12 @@ func main() {
 	router.SpotifyRoute(server)
 
 	address := "localhost:3031"
+
+	fmt.Printf("Server listening at %s\n", address)
 	err = http.ListenAndServe(address, server)
 
 	if err != nil {
 		log.Fatal("Cannot listen")
 		fmt.Println(err)
 	}
-
-	fmt.Printf("Server listening at %s\n", address)
 }

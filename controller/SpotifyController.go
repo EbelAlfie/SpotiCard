@@ -16,14 +16,14 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 	accessToken, err := tokenRepo.FetchAccessToken()
 	if err != nil {
 		log.Default().Printf("access token" + err.Error())
-		response.Write([]byte(err.Error()))
+		HandleError(err, response)
 		return
 	}
 
 	clientToken, err := tokenRepo.FetchClientToken(accessToken.ClientId)
 	if err != nil {
 		log.Default().Printf("client token" + err.Error())
-		response.Write([]byte(err.Error()))
+		HandleError(err, response)
 		return
 	}
 
@@ -34,7 +34,7 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 	playbackState, err := trackRepo.GetPlaybackState()
 	if err != nil {
 		log.Default().Printf("playback state" + err.Error())
-		response.Write([]byte(err.Error()))
+		HandleError(err, response)
 		return
 	}
 
@@ -43,7 +43,7 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 	trackResult, err := trackRepo.GetTrackById(trackId)
 	if err != nil {
 		log.Default().Printf("track" + err.Error())
-		response.Write([]byte(err.Error()))
+		HandleError(err, response)
 		return
 	}
 

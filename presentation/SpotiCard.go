@@ -148,12 +148,6 @@ func SpotifyCard(model SpoticardModel) string {
                     }
                 }
             </style>
-            <video autoplay loop>
-                <source src="{{.Audio.Url}}" type="audio/mpeg" />
-            </video>
-            <script>
-                setInterval(() => { location.reload() }, 120000) ;
-            </script>
         </defs>
         <rect 
             height="{{.Card.Height}}" 

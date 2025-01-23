@@ -18,7 +18,7 @@ func AuthController(response http.ResponseWriter, request *http.Request) {
 
 	clientID := os.Getenv("CLIENT_ID")
 	redirectTarg := "http://localhost:3031"
-	scope := "user-read-currently-playing"
+	scope := "user-read-currently-playing user-read-playback-state"
 
 	params := authUrl.Query()
 	params.Add("client_id", clientID)

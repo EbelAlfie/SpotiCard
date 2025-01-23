@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"spoti-card.com/controller/utils"
 	"spoti-card.com/data"
 	"spoti-card.com/presentation"
 )
@@ -16,14 +17,14 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 	accessToken, err := tokenRepo.FetchAccessToken()
 	if err != nil {
 		log.Default().Printf("access token" + err.Error())
-		HandleError(err, response)
+		utils.HandleError(err, response)
 		return
 	}
 
 	clientToken, err := tokenRepo.FetchClientToken(accessToken.ClientId)
 	if err != nil {
 		log.Default().Printf("client token" + err.Error())
-		HandleError(err, response)
+		utils.HandleError(err, response)
 		return
 	}
 
@@ -34,7 +35,7 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 	playbackState, err := trackRepo.GetPlaybackState()
 	if err != nil {
 		log.Default().Printf("playback state" + err.Error())
-		HandleError(err, response)
+		utils.HandleError(err, response)
 		return
 	}
 
@@ -43,7 +44,7 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 	trackResult, err := trackRepo.GetTrackById(trackId)
 	if err != nil {
 		log.Default().Printf("track" + err.Error())
-		HandleError(err, response)
+		utils.HandleError(err, response)
 		return
 	}
 

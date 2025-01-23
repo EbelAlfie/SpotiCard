@@ -38,8 +38,6 @@ func (repo *TrackRepositoryImpl) GetPlaybackState() (*entity.PlayerStateResponse
 	}
 	defer response.Body.Close()
 
-	fmt.Print(response.Body)
-
 	var result *entity.PlayerStateResponse
 	err = json.NewDecoder(response.Body).Decode(&result) 
 	if err != nil {

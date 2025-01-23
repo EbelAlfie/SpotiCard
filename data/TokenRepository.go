@@ -57,7 +57,10 @@ func (repo *TokenRepositoryImpl) FetchAccessToken() (*entity.TokenResponse, erro
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("Error HTTP")
+		return nil, &entity.HttpError { 
+			StatusCode: response.StatusCode,
+			Message: response.Status,
+		}
 	}
 	
 	var result *entity.TokenResponse

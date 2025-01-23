@@ -2,7 +2,6 @@ package controller
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"spoti-card.com/controller/utils"
@@ -11,6 +10,8 @@ import (
 )
 
 func SpotifyController(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("Content-Type", "image/svg+xml")
+
 	requestParam := request.URL.Query()
 
 	code := requestParam.Get("code")
@@ -23,7 +24,8 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 
 	tokenData, err := tokenRepository.FetchAccessToken()
 	if err != nil {
-		utils.HandleError(response, err, http.StatusBadGateway)
+		http.Redirect(response, request, "http://localhost:3031/login", http.StatusTemporaryRedirect)
+		//utils.HandleError(response, err, http.StatusBadGateway)
 		return 
 	}
 
@@ -31,7 +33,6 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 
 	playbackState, err := trackRepository.GetPlaybackState()
 	if err != nil {
-		fmt.Print(err)
 		utils.HandleError(response, err, http.StatusBadGateway)
 		return 
 	}
@@ -43,6 +44,5 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 	spotiCard := presentation.SpotifyCard(cardModel)
 	
 	response.WriteHeader(http.StatusOK)
-	response.Header().Set("Content-Type", "image/svg+xml")
 	response.Write([]byte(spotiCard))
 }

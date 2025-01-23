@@ -1,18 +1,7 @@
 package entity
 
-type PlaybackStateResponse struct {
-	PlayerState PlayerStateResponse `json:"player_state"`
-}
-
 type PlayerStateResponse struct {
-	Track        CurrentTrack `json:"track"`
-	LastPosition string       `json:"position_as_of_timestamp"`
-	Duration     string       `json:"duration"`
+	Track        TrackEntity  `json:"item"`
+	Progress int       `json:"progress_ms"`
 	IsPlaying    bool         `json:"is_playing"`
-	IsPaused     bool         `json:"is_paused"`
-}
-
-type CurrentTrack struct {
-	Uri string `json:"uri"`
-	Uid string `json:"uid"`
 }

@@ -1,10 +1,9 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
-	"log"
 	"net/http"
-	"strings"
 
 	"spoti-card.com/controller/utils"
 	"spoti-card.com/data"
@@ -12,50 +11,38 @@ import (
 )
 
 func SpotifyController(response http.ResponseWriter, request *http.Request) {
-	tokenRepo := data.TokenRepository()
+	requestParam := request.URL.Query()
 
-	accessToken, err := tokenRepo.FetchAccessToken()
+	code := requestParam.Get("code")
+	if code == "" {
+		utils.HandleError(response, errors.New("who are you?"), http.StatusBadRequest)
+		return 
+	}
+
+	tokenRepository := data.TokenRepository(code)
+
+	tokenData, err := tokenRepository.FetchAccessToken()
 	if err != nil {
-		log.Default().Printf("access token" + err.Error())
-		utils.HandleError(err, response)
-		return
+		utils.HandleError(response, err, http.StatusBadGateway)
+		return 
 	}
 
-	clientToken, err := tokenRepo.FetchClientToken(accessToken.ClientId)
+	trackRepository := data.TrackRepository(tokenData.AccessToken)
+
+	playbackState, err := trackRepository.GetPlaybackState()
 	if err != nil {
-		log.Default().Printf("client token" + err.Error())
-		utils.HandleError(err, response)
-		return
+		fmt.Print(err)
+		utils.HandleError(response, err, http.StatusBadGateway)
+		return 
 	}
 
-	fmt.Printf("New access token %s\n", accessToken.AccessToken)
-
-	trackRepo := data.TrackRepository(*accessToken, *clientToken)
-
-	playbackState, err := trackRepo.GetPlaybackState()
-	if err != nil {
-		log.Default().Printf("playback state" + err.Error())
-		utils.HandleError(err, response)
-		return
+	cardModel := presentation.SpoticardModel {
+		Track: playbackState.Track,
+		IsPlaying: playbackState.IsPlaying,
 	}
-
-	trackId := strings.ReplaceAll(playbackState.PlayerState.Track.Uri, "spotify:track:", "")
-
-	trackResult, err := trackRepo.GetTrackById(trackId)
-	if err != nil {
-		log.Default().Printf("track" + err.Error())
-		utils.HandleError(err, response)
-		return
-	}
-
-	cardModel := presentation.SpoticardModel{
-		Track:     *trackResult,
-		IsPlaying: playbackState.PlayerState.IsPlaying && !playbackState.PlayerState.IsPaused,
-	}
-	card := presentation.SpotifyCard(cardModel)
-
-	fmt.Println("All request succeeded")
-
-	response.Header().Add("Content-Type", "text/html")
-	response.Write([]byte(card))
+	spotiCard := presentation.SpotifyCard(cardModel)
+	
+	response.WriteHeader(http.StatusOK)
+	response.Header().Set("Content-Type", "image/svg+xml")
+	response.Write([]byte(spotiCard))
 }

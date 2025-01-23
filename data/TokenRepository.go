@@ -1,9 +1,11 @@
 package data
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 
@@ -11,86 +13,54 @@ import (
 	"spoti-card.com/domain/usecase"
 )
 
-type TokenRepositoryImpl struct{}
-
-func TokenRepository() usecase.TokenRepository {
-	return &TokenRepositoryImpl{}
+type TokenRepositoryImpl struct{
+	code string
 }
 
-func (repo *TokenRepositoryImpl) FetchAccessToken() (*entity.AccessTokenEntity, error) {
-	cookie := os.Getenv("ME")
-	cookieHeader := fmt.Sprintf("sp_dc=%s;", cookie)
+func TokenRepository(code string) usecase.TokenRepository {
+	return &TokenRepositoryImpl{
+		code: code,
+	}
+}
 
-	url := "https://open.spotify.com/get_access_token?reason=transport&productType=web-player"
+func (repo *TokenRepositoryImpl) FetchAccessToken() (*entity.TokenResponse, error) {
+	uri := "https://accounts.spotify.com/api/token"
 
-	client := http.Client{}
+	clientSecret := os.Getenv("CLIENT_SECRET")
+	clientId := os.Getenv("CLIENT_ID")
+	if clientId == "" || clientSecret == "" {
+		return nil, fmt.Errorf("no secret or id provided")
+	}
 
-	request, err := http.NewRequest(
-		"GET",
-		url,
-		nil,
-	)
+	auth := base64.StdEncoding.
+		EncodeToString([]byte(fmt.Sprintf("%s:%s", clientId, clientSecret))) 
+
+	body := url.Values {
+		"grant_type": {"authorization_code"},
+		"code": {repo.code},
+		"redirect_uri": {"http://localhost:3031"},
+	}
+
+	request, err := http.NewRequest("POST", uri, strings.NewReader(body.Encode()))
 	if err != nil {
 		return nil, err
 	}
 
-	request.Header.Add("cookie", cookieHeader)
+	request.Header.Add("Authorization", "Basic " + auth)
+	request.Header.Add("content-type", "application/x-www-form-urlencoded")
 
+	client := http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
 		return nil, err
 	}
 	defer response.Body.Close()
 
-	var result *entity.AccessTokenEntity
-
-	err = json.NewDecoder(response.Body).Decode(&result)
-	if err != nil {
-		return nil, err
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("Error HTTP")
 	}
-
-	return result, nil
-}
-
-func (repo *TokenRepositoryImpl) FetchClientToken(clientId string) (*entity.ClientTokenEntity, error) {
-	url := "https://clienttoken.spotify.com/v1/clienttoken"
-
-	client := http.Client{}
-
-	body := fmt.Sprintf(
-		`
-		{
-			"client_data":{
-				"client_version":"1.2.53.257.g47fa6c39",
-				"client_id":"%s",
-				"js_sdk_data":{
-					"device_brand":"unknown",
-					"device_model":"unknown",
-					"os":"linux",
-					"os_version":"unknown",
-					"device_id":"hahaha",
-					"device_type":"computer"
-					}
-				}
-			}
-	`, clientId)
-	reqBody := strings.NewReader(body)
-
-	request, err := http.NewRequest("POST", url, reqBody)
-	if err != nil {
-		return nil, err
-	}
-
-	request.Header.Add("accept", "application/json")
-	request.Header.Add("content-type", "application/json")
-
-	response, err := client.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-
-	var result *entity.ClientTokenEntity
+	
+	var result *entity.TokenResponse
 	err = json.NewDecoder(response.Body).Decode(&result)
 	if err != nil {
 		return nil, err

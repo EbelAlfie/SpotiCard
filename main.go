@@ -17,7 +17,9 @@ func main() {
 	}
 
 	server := http.NewServeMux()
+	
 	router.SpotifyRoute(server)
+	router.AuthRouter(server)
 
 	address := "localhost:3031"
 

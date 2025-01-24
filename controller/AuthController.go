@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -10,15 +9,11 @@ import (
 func AuthController(response http.ResponseWriter, request *http.Request) {
 	rawUrl := "https://accounts.spotify.com/authorize?"
 	
-	authUrl, err := url.Parse(rawUrl)
-	if err != nil { //Sebenernya ga perlu
-		log.Fatal("error parsing url")
-		http.Error(response, err.Error(), http.StatusInternalServerError)
-	}
+	authUrl, _ := url.Parse(rawUrl)
 
 	clientID := os.Getenv("CLIENT_ID")
 	redirectTarg := "http://localhost:3031"
-	scope := "user-read-currently-playing user-read-playback-state"
+	scope := "user-read-currently-playing user-read-playback-state user-read-recently-played"
 
 	params := authUrl.Query()
 	params.Add("client_id", clientID)

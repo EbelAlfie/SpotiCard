@@ -2,6 +2,7 @@ package controller
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"spoti-card.com/controller/utils"
@@ -24,22 +25,30 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 
 	tokenData, err := tokenRepository.FetchAccessToken()
 	if err != nil {
+		fmt.Printf("token %s", err)
 		http.Redirect(response, request, "http://localhost:3031/login", http.StatusTemporaryRedirect)
 		//utils.HandleError(response, err, http.StatusBadGateway)
 		return 
 	}
 
+	fmt.Println(tokenData.AccessToken)
+
 	trackRepository := data.TrackRepository(tokenData.AccessToken)
 
-	playbackState, err := trackRepository.GetPlaybackState()
+	playbackState, err := trackRepository.GetRecentlyPlayed()
 	if err != nil {
+		fmt.Printf("playback %s", err)
 		utils.HandleError(response, err, http.StatusBadGateway)
 		return 
 	}
 
+	fmt.Println("Track")
+	fmt.Println(playbackState)
+	// fmt.Println(playbackState.IsPlaying)
+
 	cardModel := presentation.SpoticardModel {
-		Track: playbackState.Track,
-		IsPlaying: playbackState.IsPlaying,
+		Track: *playbackState,
+		IsPlaying: false, //playbackState.IsPlaying,
 	}
 	spotiCard := presentation.SpotifyCard(cardModel)
 	

@@ -35,20 +35,24 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 
 	trackRepository := data.TrackRepository(tokenData.AccessToken)
 
-	playbackState, err := trackRepository.GetRecentlyPlayed()
+	trackData, err := trackRepository.GetRecentlyPlayed()
+	if httpErr, isType := err.(*entity.HttpError); isType {
+		trackData, err := trackRepository.GetRecentlyPlayed()
+	}
+
 	if err != nil {
 		fmt.Printf("playback %s", err)
 		utils.HandleError(response, err, http.StatusBadGateway)
-		return 
+		return
 	}
 
 	fmt.Println("Track")
-	fmt.Println(playbackState)
-	// fmt.Println(playbackState.IsPlaying)
+	fmt.Println(trackData)
+	// fmt.Println(trackData.IsPlaying)
 
 	cardModel := presentation.SpoticardModel {
-		Track: *playbackState,
-		IsPlaying: false, //playbackState.IsPlaying,
+		Track: *trackData,
+		IsPlaying: false, //trackData.IsPlaying,
 	}
 	spotiCard := presentation.SpotifyCard(cardModel)
 	

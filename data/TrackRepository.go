@@ -3,7 +3,6 @@ package data
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 
 	"spoti-card.com/domain/entity"
@@ -40,14 +39,17 @@ func (repo *TrackRepositoryImpl) GetPlaybackState() (*entity.PlayerStateResponse
 	defer response.Body.Close()
 	fmt.Printf("Status %d", response.StatusCode)
 
-	res, err := io.ReadAll(response.Body)
-	bodyString := string(res)
-	fmt.Println(bodyString)
-	fmt.Println(err)
+	if response.StatusCode != http.StatusOK {
+		return nil, &entity.HttpError{
+			StatusCode: response.StatusCode,
+			Message: response.Status,
+		}
+	}
 
 	var result *entity.PlayerStateResponse
 	err = json.NewDecoder(response.Body).Decode(&result) 
 	if err != nil {
+		fmt.Println(err.Error())
 		return nil, err
 	}
 

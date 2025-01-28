@@ -8,6 +8,7 @@ import (
 	"spoti-card.com/controller/utils"
 	"spoti-card.com/data"
 	"spoti-card.com/presentation"
+	"spoti-card.com/domain/entity"
 )
 
 func SpotifyController(response http.ResponseWriter, request *http.Request) {
@@ -35,9 +36,18 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 
 	trackRepository := data.TrackRepository(tokenData.AccessToken)
 
-	trackData, err := trackRepository.GetRecentlyPlayed()
-	if httpErr, isType := err.(*entity.HttpError); isType {
-		trackData, err := trackRepository.GetRecentlyPlayed()
+	var trackData *entity.TrackEntity
+	var isPlaying bool
+	playbackState, err := trackRepository.GetPlaybackState()
+
+	if playbackState != nil {
+		trackData = &playbackState.Track
+		isPlaying = playbackState.IsPlaying
+	}
+
+	if httpErr, isType := err.(*entity.HttpError); isType && httpErr.StatusCode == 204 {
+		trackData, err = trackRepository.GetRecentlyPlayed()
+		isPlaying = false
 	}
 
 	if err != nil {
@@ -52,7 +62,7 @@ func SpotifyController(response http.ResponseWriter, request *http.Request) {
 
 	cardModel := presentation.SpoticardModel {
 		Track: *trackData,
-		IsPlaying: false, //trackData.IsPlaying,
+		IsPlaying: isPlaying, //trackData.IsPlaying,
 	}
 	spotiCard := presentation.SpotifyCard(cardModel)
 	

@@ -7,12 +7,13 @@ import (
 
 	"spoti-card.com/controller/utils"
 	"spoti-card.com/data"
-	"spoti-card.com/presentation"
 	"spoti-card.com/domain/entity"
+	"spoti-card.com/presentation"
 )
 
 func SpotifyController(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("Content-Type", "image/svg+xml")
+	response.Header().Set("Cache-Control", "max-age=1 ,s-maxage=1")
 
 	requestParam := request.URL.Query()
 
